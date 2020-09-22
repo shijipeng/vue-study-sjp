@@ -16,13 +16,17 @@
  *
  */
 
+//  为什么要把vue传进来，直接用不行吗
+
 let _Vue
 
 class VueRouter {
   // 选项：routes- 路由表
   constructor(options) {
     this.$options = options
-    _Vue
+    // 需要定义一个响应式的current属性
+    const initial = window.location.hash.slice(1) || '/'
+    _Vue.util.defineReactive(this, 'current', initial)
     // 监控url变化
     window.addEventListener('hashchange', this.onhashchange.bind(this))
   }
@@ -66,7 +70,7 @@ VueRouter.install = function(Vue) {
     render(h) {
       let component = null
       // 找到当前Url对应的组件
-      const route = this.$router.$options.route.find(route => route.path === this.$router.current)
+      const route = this.$router.$options.routes.find(route => route.path === this.$router.current)
       component = route.component
       //  渲染传入的组件
       return h(component)
